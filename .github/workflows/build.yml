@@ -4,6 +4,24 @@ on:
   push:
     branches:
       - build
+  workflow_dispatch:
+    inputs:
+      type:
+        description: 'Tipe build (flutter / web2apk)'
+        required: false
+        default: 'flutter'
+      url:
+        description: 'URL website (untuk web2apk)'
+        required: false
+        default: ''
+      app_name:
+        description: 'Nama aplikasi'
+        required: false
+        default: 'MyApp'
+      build_type:
+        description: 'release atau debug'
+        required: false
+        default: 'release'
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -46,6 +64,22 @@ jobs:
             cat build-config.json
           else
             echo "type=unknown" >> $GITHUB_ENV
+          fi
+
+      - name: Override config from workflow_dispatch inputs
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          if [ -n "${{ github.event.inputs.type }}" ]; then
+            echo "type=${{ github.event.inputs.type }}" >> $GITHUB_ENV
+          fi
+          if [ -n "${{ github.event.inputs.url }}" ]; then
+            echo "url=${{ github.event.inputs.url }}" >> $GITHUB_ENV
+          fi
+          if [ -n "${{ github.event.inputs.app_name }}" ]; then
+            echo "app_name=${{ github.event.inputs.app_name }}" >> $GITHUB_ENV
+          fi
+          if [ -n "${{ github.event.inputs.build_type }}" ]; then
+            echo "build_type=${{ github.event.inputs.build_type }}" >> $GITHUB_ENV
           fi
 
       - name: Generate keystore for signing (all builds)
