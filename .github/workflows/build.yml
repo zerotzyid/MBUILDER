@@ -453,7 +453,7 @@ jobs:
       - name: Web2APK - Apply URL, app name, icons, and keystore
         if: env.type == 'web2apk'
         run: |
-          # Baca langsung dari build-config.json (bukan interpolasi ${{ }}) supaya karakter
+          # Baca langsung dari build-config.json (bukan interpolasi expression GitHub) supaya karakter
           # seperti & ? " ' di URL / nama aplikasi tidak merusak sed, Java, atau strings.xml
           W2A_URL=$(jq -r .url build-config.json)
           W2A_NAME=$(jq -r .app_name build-config.json)
